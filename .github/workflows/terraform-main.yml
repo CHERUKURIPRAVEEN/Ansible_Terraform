@@ -1,0 +1,191 @@
+name: Terraform Pipeline
+run-name: Deploy Infrastructure
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - master
+  
+  pull_request:
+    branches:
+      - master
+    types:
+      - opened
+      - synchronize
+      - reopened
+  
+  workflow_dispatch:
+    inputs:
+      deployment_action:
+        description: "Terraform Action"
+        required: true
+        type: choice
+        options:
+          - plan
+          - apply
+      
+      destroy:
+        description: "Destroy Terraform resources"
+        required: false
+        type: boolean
+        default: false
+
+      target_resource:
+        description: "Terraform resource address to destroy. Use 'all' to destroy everything."
+        required: false
+        type: string
+        default: "all" 
+    
+env:
+ TF_LOG: INFO
+ AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+ AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+ TF_WORKING_DIR: .
+ TF_VERSION: 1.12.2
+ TF_PLUGIN_CACHE_DIR: ~/.terraform.d/plugin-cache
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: aws cli setup
+        uses: ./.github/actions/aws_cli
+
+      - name: Verify AWS Identity
+        run: aws sts get-caller-identity
+
+      - name: Install Terraform
+        uses: ./.github/actions/terraform
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Initialize
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Setup TFLint
+        uses: ./.github/actions/tflint
+        
+      - name: Initialize TFLint
+        run: tflint --init
+
+      - name: Run TFLint
+        run: tflint --recursive
+
+      - name: Install Checkov Dependencies
+        uses: ./.github/actions/checkov
+
+      - name: Checkov Scan
+        run: |
+          $HOME/.checkov-env/bin/checkov \
+            -d . \
+            --skip-check CKV_GHA_7,CKV_TF_1 \
+            --soft-fail
+
+  plan:
+    needs: validate
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request' ||
+      github.event.inputs.deployment_action == 'plan' ||
+      github.event.inputs.deployment_action == 'apply'
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: ./.github/actions/terraform
+
+      - name: Terraform Initialize
+        run: terraform init
+
+      - name: Terraform Plan
+        run: |
+          terraform plan -var-file=variables/dev.tfvars -out=tfplan
+      
+      - name: Show Terraform Plan
+        run: terraform show -no-color tfplan
+
+      - name: Upload Plan Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: tfplan
+  
+  approval:
+    needs: plan
+    runs-on: ubuntu-latest
+    environment: dev
+    if: |
+      github.event_name == 'workflow_dispatch' &&
+      github.event.inputs.deployment_action == 'apply'
+
+    steps:
+      - name: Waiting for Approval
+        run: echo "Approved. Proceeding to deployment."
+  
+
+  apply:
+    needs: approval
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' &&
+      github.event.inputs.deployment_action == 'apply'
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: ./.github/actions/terraform
+      
+      - name: Terraform Initialize
+        run: terraform init
+
+      - name: Download Plan Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve tfplan
+
+  destroy:
+    needs: apply
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' &&
+      github.event.inputs.destroy == 'true'
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: ./.github/actions/terraform
+      
+      - name: Terraform Initialize
+        run: terraform init
+
+      - name: Terraform Destroy
+        run: |
+          if [ "${{ github.event.inputs.target_resource }}" = "all" ]; then
+            terraform destroy \
+              -var-file=variables/dev.tfvars \
+              -auto-approve
+          else
+            terraform destroy \
+              -var-file=variables/dev.tfvars \
+              -target="${{ github.event.inputs.target_resource }}" \
+              -auto-approve
+          fi
