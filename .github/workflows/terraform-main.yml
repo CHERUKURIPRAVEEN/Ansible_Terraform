@@ -88,6 +88,7 @@ jobs:
         run: |
           $HOME/.checkov-env/bin/checkov \
             -d . \
+            --download-external-modules true \
             --skip-check CKV_GHA_7,CKV_TF_1 \
             --soft-fail
 

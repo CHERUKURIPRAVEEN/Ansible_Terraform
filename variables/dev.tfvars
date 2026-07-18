@@ -9,7 +9,7 @@ description  = "This is a test EC2 instance created by Terraform module"
 
 #------------------------------------------ VPC Variables --------------------------------------------------------#
 region                              = "us-east-1"
-environment                         = "Dev"
+environment                         = "TA01"
 vpc_name                            = "MANAGEMENT_VPC"
 cidr_block                          = "10.11.0.0/16"
 enable_dns_hostnames                = true
