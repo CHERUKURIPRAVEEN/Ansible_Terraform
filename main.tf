@@ -1,6 +1,6 @@
 #------------------------------------------VPC Module--------------------------------------------------------#
 module "vpc_main" {
-  source                              = "git::https://github.com/CHERUKURIPRAVEEN/aws-vpc-module.git?ref=v0.8.0"
+  source                              = "git::https://github.com/CHERUKURIPRAVEEN/aws-vpc-module.git?ref=v0.9.0"
   region                              = var.region
   vpc_name                            = var.vpc_name
   cidr_block                          = var.cidr_block
@@ -10,18 +10,22 @@ module "vpc_main" {
   private_dns_hostname_type_on_launch = var.private_dns_hostname_type_on_launch
   map_public_ip_on_launch             = var.map_public_ip_on_launch
   environment                         = var.environment
+  environment_code                    = var.environment_code
+  application_code                    = var.application_code
   create_nat_gateway                  = var.create_nat_gateway
   single_nat_gateway                  = var.single_nat_gateway
   tags                                = var.tags
 }
 
 module "sg_ssh" {
-  source = "git::https://github.com/CHERUKURIPRAVEEN/aws-sg-module.git?ref=v0.1.0"
+  source = "git::https://github.com/CHERUKURIPRAVEEN/aws-sg-module.git?ref=v0.3.0"
 
   description       = "Security group for SSH access ${var.application}"
   required_vpc_name = var.required_vpc_name
   environment       = var.environment
   application       = var.application
+  application_code  = var.application_code
+  environment_code  = var.environment_code
   project           = var.project
   owner             = var.owner
   app_owner         = var.app_owner
@@ -34,13 +38,15 @@ module "sg_ssh" {
 }
 #------------------------------------------EC2 Instance--------------------------------------------------------#
 module "ec2_instance" {
-  source = "git::https://github.com/CHERUKURIPRAVEEN/aws-ec2-module.git?ref=v0.7.0"
+  source = "git::https://github.com/CHERUKURIPRAVEEN/aws-ec2-module.git?ref=v0.8.0"
 
   for_each = var.servers_details
 
   ami_name                     = var.ami_name
   application                  = var.application
   environment                  = var.environment
+  environment_code             = var.environment_code
+  application_code             = var.application_code
   instance_role                = var.instance_role
   key_pair                     = each.value.key_pair
   project                      = var.project

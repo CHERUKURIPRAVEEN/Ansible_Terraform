@@ -20,6 +20,16 @@ variable "environment" {
   default     = "Dev"
 }
 
+variable "application_code" {
+  description = "Application Code"
+  type        = string
+}
+
+variable "environment_code" {
+  description = "Environment Code"
+  type        = string
+}
+
 #-------------------------------------- VPC Variables -----------------------------------------#
 variable "vpc_name" {
   description = "vpc name"
