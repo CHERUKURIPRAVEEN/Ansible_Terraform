@@ -22,7 +22,7 @@ module "vpc_main" {
 module "sg_ssh" {
   source = "git::https://github.com/CHERUKURIPRAVEEN/aws-sg-module.git?ref=v0.4.0"
 
-  description       = "Security group for SSH access ${var.application}"
+  description       = "${var.description}-${var.application}"
   required_vpc_name = var.vpc_name
   environment       = var.environment
   application       = var.application
