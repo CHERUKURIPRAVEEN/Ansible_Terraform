@@ -36,12 +36,13 @@ variable "application_code" {
 }
 
 variable "environment_code" {
-  description = "Environment Code"
+  description = "Environment code for the EC2 instance. Possible values: 'Dev','Qa','Stage','PreProd','Production'"
   type        = string
+  default     = "A1"
 
   validation {
-    condition     = length(var.environment_code) > 2
-    error_message = "Environment code should be minimum of 3 characters"
+    condition     = length(var.environment_code) == 2
+    error_message = "Environment code should be 'A1','S1','S2','SX','P1','P2','PX','PR','PD'"
   }
 }
 

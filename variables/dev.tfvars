@@ -8,7 +8,7 @@ app_owner    = "praveen.cherukuri@veen.com"
 description  = "This is a test EC2 instance created by Terraform module"
 
 environment_code = "A1"
-application_code = "TRAN"
+application_code = "TA"
 #------------------------------------------ VPC Variables --------------------------------------------------------#
 region                              = "us-east-1"
 environment                         = "Dev"

@@ -1,6 +1,6 @@
 #------------------------------------------VPC Module--------------------------------------------------------#
 module "vpc_main" {
-  source                              = "git::https://github.com/CHERUKURIPRAVEEN/aws-vpc-module.git?ref=v0.10.0"
+  source                              = "git::https://github.com/CHERUKURIPRAVEEN/aws-vpc-module.git?ref=v0.12.0"
   region                              = var.region
   application                         = var.application
   application_code                    = var.application_code
