@@ -56,6 +56,36 @@ variable "application" {
   }
 }
 
+variable "owner" {
+  description = "Email address of the EC2 instance owner."
+  type        = string
+
+  validation {
+    condition     = can(regex("^[A-Za-z0-9._%+-]+@veen\\.com$", var.owner))
+    error_message = "Owner email must be a valid @veen.com address."
+  }
+}
+
+variable "app_owner" {
+  description = "Email address of the application owner."
+  type        = string
+
+  validation {
+    condition     = can(regex("^[A-Za-z0-9._%+-]+@veen\\.com$", var.app_owner))
+    error_message = "Application owner email must be a valid @veen.com address."
+  }
+}
+
+variable "description" {
+  description = "Description for which EC2 instance is being created"
+  type        = string
+
+  validation {
+    condition     = length(var.description) > 9
+    error_message = "Description value should be minimum of 10 characters"
+  }
+}
+
 #-------------------------------------- VPC Variables -----------------------------------------#
 variable "vpc_name" {
   description = "vpc name"
@@ -126,6 +156,28 @@ variable "private_subnets" {
   default = []
 }
 
+#-------------------------------------- SG Variables -----------------------------------------#
+
+variable "ingress_rules" {
+  type = list(object({
+    protocol    = string
+    from_port   = number
+    to_port     = number
+    cidr_ipv4   = optional(string)
+    description = optional(string)
+  }))
+}
+
+variable "egress_rules" {
+  type = list(object({
+    protocol    = string
+    from_port   = number
+    to_port     = number
+    cidr_ipv4   = optional(string)
+    description = optional(string)
+  }))
+}
+
 #-------------------------------------- EC2 Variables -----------------------------------------#
 
 # variable "ami_name" {
@@ -140,8 +192,8 @@ variable "private_subnets" {
 #   default     = ""
 
 #   validation {
-#     condition     = length(var.project) > 7 || var.project == ""
-#     error_message = "Project value should be minimum of 8 characters or empty"
+#     condition     = length(var.project) <= 7 || var.project == ""
+#     error_message = "Project value should be maximum of 7 characters or empty"
 #   }
 # }
 
@@ -153,36 +205,6 @@ variable "private_subnets" {
 #   validation {
 #     condition     = contains(["N/A", "NonProd", "Prod"], var.backup)
 #     error_message = "Backup must be only these values 'N/A', 'NonProd', 'Prod'."
-#   }
-# }
-
-# variable "owner" {
-#   description = "Email address of the EC2 instance owner."
-#   type        = string
-
-#   validation {
-#     condition     = can(regex("^[A-Za-z0-9._%+-]+@veen\\.com$", var.owner))
-#     error_message = "Owner email must be a valid @veen.com address."
-#   }
-# }
-
-# variable "app_owner" {
-#   description = "Email address of the application owner."
-#   type        = string
-
-#   validation {
-#     condition     = can(regex("^[A-Za-z0-9._%+-]+@veen\\.com$", var.app_owner))
-#     error_message = "Application owner email must be a valid @veen.com address."
-#   }
-# }
-
-# variable "description" {
-#   description = "Description for which EC2 instance is being created"
-#   type        = string
-
-#   validation {
-#     condition     = length(var.description) > 9
-#     error_message = "Description value should be minimum of 10 characters"
 #   }
 # }
 
@@ -270,27 +292,5 @@ variable "private_subnets" {
 #     required_private_subnet_name = string
 #     availability_zone            = string
 #     key_pair                     = string
-#   }))
-# }
-
-# #-------------------------------------- SG Variables -----------------------------------------#
-
-# variable "ingress_rules" {
-#   type = list(object({
-#     protocol    = string
-#     from_port   = number
-#     to_port     = number
-#     cidr_ipv4   = optional(string)
-#     description = optional(string)
-#   }))
-# }
-
-# variable "egress_rules" {
-#   type = list(object({
-#     protocol    = string
-#     from_port   = number
-#     to_port     = number
-#     cidr_ipv4   = optional(string)
-#     description = optional(string)
 #   }))
 # }
