@@ -1,6 +1,6 @@
 #------------------------------------------VPC Module--------------------------------------------------------#
 module "vpc_main" {
-  source                              = "git::https://github.com/CHERUKURIPRAVEEN/aws-vpc-module.git?ref=v0.9.0"
+  source                              = "git::https://github.com/CHERUKURIPRAVEEN/aws-vpc-module.git?ref=v0.8.0"
   region                              = var.region
   vpc_name                            = var.vpc_name
   cidr_block                          = var.cidr_block
