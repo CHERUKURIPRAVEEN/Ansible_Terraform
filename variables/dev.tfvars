@@ -29,6 +29,41 @@ private_subnets = [
   { availability_zone = "us-east-1b", cidr_block = "10.11.11.0/24" }
 ]
 
+#------------------------------------------ SG Variables --------------------------------------------------------#
+ingress_rules = [
+  {
+    protocol    = "tcp"
+    from_port   = 22
+    to_port     = 22
+    cidr_ipv4   = "0.0.0.0/0"
+    description = "SSH access"
+  },
+  {
+    protocol    = "tcp"
+    from_port   = 80
+    to_port     = 80
+    cidr_ipv4   = "0.0.0.0/0"
+    description = "HTTP access"
+  },
+  {
+    protocol    = "tcp"
+    from_port   = 443
+    to_port     = 443
+    cidr_ipv4   = "0.0.0.0/0"
+    description = "HTTPS access"
+  }
+]
+
+egress_rules = [
+  {
+    protocol    = "-1"
+    from_port   = 0
+    to_port     = 0
+    cidr_ipv4   = "0.0.0.0/0"
+    description = "All outbound traffic"
+  }
+]
+
 #------------------------------------------ EC2 Variables --------------------------------------------------------#
 # ami_name                     = "Jenkins-Server-Image"
 # os_disk_size                 = 30
@@ -51,38 +86,3 @@ private_subnets = [
 #     availability_zone            = "us-east-1a"
 #   }
 # }
-
-# #------------------------------------------ SG Variables --------------------------------------------------------#
-# ingress_rules = [
-#   {
-#     protocol    = "tcp"
-#     from_port   = 22
-#     to_port     = 22
-#     cidr_ipv4   = "0.0.0.0/0"
-#     description = "SSH access"
-#   },
-#   {
-#     protocol    = "tcp"
-#     from_port   = 80
-#     to_port     = 80
-#     cidr_ipv4   = "0.0.0.0/0"
-#     description = "HTTP access"
-#   },
-#   {
-#     protocol    = "tcp"
-#     from_port   = 443
-#     to_port     = 443
-#     cidr_ipv4   = "0.0.0.0/0"
-#     description = "HTTPS access"
-#   }
-# ]
-
-# egress_rules = [
-#   {
-#     protocol    = "-1"
-#     from_port   = 0
-#     to_port     = 0
-#     cidr_ipv4   = "0.0.0.0/0"
-#     description = "All outbound traffic"
-#   }
-# ]

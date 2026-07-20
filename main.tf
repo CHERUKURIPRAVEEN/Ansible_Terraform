@@ -18,25 +18,25 @@ module "vpc_main" {
   tags                                = var.tags
 }
 
-# module "sg_ssh" {
-#   source = "git::https://github.com/CHERUKURIPRAVEEN/aws-sg-module.git?ref=v0.3.0"
+#------------------------------------------SG Instance--------------------------------------------------------#
+module "sg_ssh" {
+  source = "git::https://github.com/CHERUKURIPRAVEEN/aws-sg-module.git?ref=v0.4.0"
 
-#   description       = "Security group for SSH access ${var.application}"
-#   required_vpc_name = var.required_vpc_name
-#   environment       = var.environment
-#   application       = var.application
-#   application_code  = var.application_code
-#   environment_code  = var.environment_code
-#   project           = var.project
-#   owner             = var.owner
-#   app_owner         = var.app_owner
-#   tags              = var.tags
+  description       = "Security group for SSH access ${var.application}"
+  required_vpc_name = var.vpc_name
+  environment       = var.environment
+  application       = var.application
+  application_code  = var.application_code
+  environment_code  = var.environment_code
+  owner             = var.owner
+  app_owner         = var.app_owner
+  tags              = var.tags
 
-#   ingress_rules = var.ingress_rules
-#   egress_rules  = var.egress_rules
+  ingress_rules = var.ingress_rules
+  egress_rules  = var.egress_rules
 
+}
 
-# }
 # #------------------------------------------EC2 Instance--------------------------------------------------------#
 # module "ec2_instance" {
 #   source = "git::https://github.com/CHERUKURIPRAVEEN/aws-ec2-module.git?ref=v0.8.0"
