@@ -7,12 +7,12 @@ owner        = "praveen.cherukuri@veen.com"
 app_owner    = "praveen.cherukuri@veen.com"
 description  = "This is a test EC2 instance created by Terraform module"
 
+environment_code = "A1"
+application_code = "TRAN"
 #------------------------------------------ VPC Variables --------------------------------------------------------#
 region                              = "us-east-1"
-environment                         = "DEV"
-environment_code                    = "D1"
-application_code                    = "TA"
-vpc_name                            = "MANAGEMENT_VPC"
+environment                         = "Dev"
+vpc_name                            = "TRAN_VPC"
 cidr_block                          = "10.11.0.0/16"
 enable_dns_hostnames                = true
 private_dns_hostname_type_on_launch = "ip-name"
@@ -33,7 +33,7 @@ private_subnets = [
 ami_name                     = "Jenkins-Server-Image"
 os_disk_size                 = 30
 instance_type                = "t3.micro"
-required_vpc_name            = "MANAGEMENT_VPC"
+required_vpc_name            = "TRAN_VPC"
 availability_zone            = "us-east-1a"
 user_data_template_name      = "userdata"
 key_pair                     = "tf-key-pair"
