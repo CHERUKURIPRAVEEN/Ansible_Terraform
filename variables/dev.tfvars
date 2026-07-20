@@ -12,7 +12,7 @@ application_code = "TRAN"
 #------------------------------------------ VPC Variables --------------------------------------------------------#
 region                              = "us-east-1"
 environment                         = "Dev"
-vpc_name                            = "TRAN_VPC"
+vpc_name                            = "MANAGEMENT_VPC"
 cidr_block                          = "10.11.0.0/16"
 enable_dns_hostnames                = true
 private_dns_hostname_type_on_launch = "ip-name"
