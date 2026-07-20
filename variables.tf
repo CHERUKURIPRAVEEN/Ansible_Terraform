@@ -45,6 +45,16 @@ variable "environment_code" {
   }
 }
 
+variable "application" {
+  description = "Application tag value for the EC2 instance. Minimum of 8 characters."
+  type        = string
+
+  validation {
+    condition     = length(var.application) > 7
+    error_message = "application value should be minimum of 8 characters"
+  }
+}
+
 #-------------------------------------- VPC Variables -----------------------------------------#
 variable "vpc_name" {
   description = "vpc name"
@@ -121,16 +131,6 @@ variable "private_subnets" {
 #   description = "AMI Name"
 #   type        = string
 #   default     = "ubuntu"
-# }
-
-# variable "application" {
-#   description = "Application tag value for the EC2 instance. Minimum of 8 characters."
-#   type        = string
-
-#   validation {
-#     condition     = length(var.application) > 7
-#     error_message = "application value should be minimum of 8 characters"
-#   }
 # }
 
 # variable "project" {
