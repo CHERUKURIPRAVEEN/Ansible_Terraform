@@ -10,8 +10,6 @@ module "vpc_main" {
   private_dns_hostname_type_on_launch = var.private_dns_hostname_type_on_launch
   map_public_ip_on_launch             = var.map_public_ip_on_launch
   environment                         = var.environment
-  environment_code                    = var.environment_code
-  application_code                    = var.application_code
   create_nat_gateway                  = var.create_nat_gateway
   single_nat_gateway                  = var.single_nat_gateway
   tags                                = var.tags
